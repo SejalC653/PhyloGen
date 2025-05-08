@@ -1,7 +1,7 @@
 import streamlit as st
 import subprocess
 import os
-from Bio import SeqIO, Phylo, AlignIO
+from Biopython import SeqIO, Phylo, AlignIO
 import matplotlib.pyplot as plt
 from io import StringIO
 import tempfile
