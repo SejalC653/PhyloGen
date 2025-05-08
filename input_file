@@ -1,0 +1,10 @@
+# A multi-fasta file (more than 3 sequences)
+
+>seq1 
+ATGCATGCATGC
+>seq2 
+ATGCATGCATGC
+>seq3 
+ATGCATGCATGC
+>seq4 
+ATGCATGCATGC
