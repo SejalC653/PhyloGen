@@ -1,21 +1,19 @@
 import streamlit as st
 import subprocess
 import os
-from Biopython import SeqIO, Phylo, AlignIO
+from bio import SeqIO, Phylo, AlignIO
 import matplotlib.pyplot as plt
 from io import StringIO
 import tempfile
 from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor, ParsimonyTreeConstructor, ParsimonyScorer, NNITreeSearcher
 import streamlit as st
 
-# ✅ First Streamlit Command
 st.set_page_config(
     page_title="PhyloGen - Home",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# --- Custom CSS --- 
 st.markdown("""
     <style>
         .content-box {
@@ -118,7 +116,6 @@ with tab3:
     </style>
     """, unsafe_allow_html=True)
 
-    # Functions
     def validate_fasta(uploaded_file):
         try:
             with tempfile.NamedTemporaryFile(delete=False) as tmp:
@@ -148,11 +145,9 @@ with tab3:
         cmd = "FastTree -gtr -nt alignment.fasta > tree.nwk"
         subprocess.run(cmd, shell=True, check=True)
 
-    # Main App
     st.title("PhyloGen Tool")
     st.markdown("Upload your FASTA file and generate publication-quality phylogenetic trees!")
 
-    # File Upload Section
     uploaded_file = st.file_uploader("Choose a file", type=["fasta", "fa"])
 
     if uploaded_file is not None:
@@ -171,7 +166,6 @@ with tab3:
                 })
             st.dataframe(pd.DataFrame(seq_data), height=200)
 
-    # Sidebar
     with st.sidebar:
         st.header("Workflow")
         st.markdown("""
@@ -187,7 +181,6 @@ with tab3:
         sequence_type = st.radio("Select Sequence Type", ["DNA", "Protein"])
         st.divider()
 
-    # Processing Section
     is_valid, error_msg = validate_fasta(uploaded_file)
     if uploaded_file and is_valid:
         with st.expander("⚙️ STEP 2: Processing Options", expanded=True):
@@ -271,7 +264,6 @@ with tab3:
 
                 status.update(label="Analysis Complete!", state="complete", expanded=False)
 
-            # Results
             st.subheader("Results")
             t1, t2, t3 = st.tabs(["Tree Visualization", "Alignment", "Tree Data"])
 
@@ -295,7 +287,6 @@ with tab3:
                         st.download_button("Download Newick", tree_file.read(), "tree.nwk")
                     st.code(open(tree_nwk_path).read(), language='newick')
 
-    # Cleanup
     if uploaded_file:
         for f in ["temp.fasta", "alignment.fasta", "tree.txt", "tree.nwk"]:
             if os.path.exists(f):
