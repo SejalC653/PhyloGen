@@ -1,0 +1,368 @@
+import streamlit as st
+import subprocess
+import os
+from Bio import SeqIO, Phylo, AlignIO
+import matplotlib.pyplot as plt
+from io import StringIO
+import tempfile
+from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor, ParsimonyTreeConstructor, ParsimonyScorer, NNITreeSearcher
+import streamlit as st
+
+# ✅ First Streamlit Command
+st.set_page_config(
+    page_title="PhyloGen - Home",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# --- Custom CSS --- 
+st.markdown("""
+    <style>
+        .content-box {
+            padding: 2.5rem;
+            border-radius: 12px;
+            margin-top: 20px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.05);
+        }
+
+        .features-box {
+            background-color: #cce4f6; /* Light blue background for Features section */
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            color: #114b5f;
+            margin-bottom: 0 !important;  /* Removed space below title */
+        }
+
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 20px;
+            margin-top: 0 !important;  /* Removed space above tabs */
+        }
+
+        .stTabs [data-baseweb="tab"] {
+            font-size: 18px;
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 10px 10px 0 0;
+            background-color: #cce4f6;
+            color: #114b5f;
+            transition: background-color 0.3s ease;
+            margin-top: 0;  /* No margin to prevent any gap */
+        }
+
+        .stTabs [aria-selected="true"] {
+            background-color: #114b5f;
+            color: white;
+        }
+
+    </style>
+""", unsafe_allow_html=True)
+
+# --- Tabs ---
+tab1, tab2, tab3, tab4 = st.tabs(["🏠️ About", "📘 User Guide", "🧪 PhyloGen Tool", "ℹ️ About"])
+
+with tab1:
+    st.markdown('<div class="content-box">', unsafe_allow_html=True)
+
+    st.markdown("## 🧬 Welcome to PhyloGen")
+    st.markdown(""" 
+    **PhyloGen** is an intuitive web application for building phylogenetic trees from DNA or protein sequences in FASTA format.  
+    Designed for students, researchers, and life scientists, PhyloGen streamlines alignment and tree construction using trusted tools—without needing to write code or use the command line.
+    """)
+
+    # Removed the light blue box – replaced with regular content-box
+    st.markdown("### 🛠️ Features")
+    st.markdown("""  
+    - 📁 **FASTA File Upload** – Upload .fasta or .fa files with 3+ sequences  
+    - 🧬 **Multiple Sequence Alignment** – Choose from **MAFFT**, **MUSCLE**, or **ClustalW**  
+    - 🌳 **Tree Construction Methods**:
+        - Distance-based: **Neighbor Joining**, **UPGMA**
+        - Character-based: **Maximum Parsimony**, **Maximum Likelihood (FastTree)**
+    - ⚙️ **Customizable Parameters** – Gap penalties, substitution models for DNA or protein  
+    - 📊 **Interactive Preview** – See uploaded sequence details before processing  
+    - 📤 **Export Results**:
+        - Aligned sequences (FASTA)  
+        - Tree files (Newick format)  
+        - Tree images (PNG, ready for publication)
+    """)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with tab2:
+    st.markdown('<div class="content-box">', unsafe_allow_html=True)
+    st.markdown("""  
+    ### 📘 User Guide
+
+    1. **Upload FASTA File** – Ensure the file has 3 or more sequences.
+    2. **Select Sequence type** - DNA or Protein.
+    3. **Select Alignment Tool** – MAFFT (default), MUSCLE, or ClustalW.  
+    4. **Set Parameters** – Adjust gap penalties and substitution models.  
+    5. **Choose Tree Construction Method** – NJ, UPGMA, MP, or ML.  
+    6. **View & Download** – Preview the tree and download results (FASTA, Newick, PNG).  
+    """)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with tab3:
+    # Custom CSS
+    st.markdown("""
+    <style>
+        .main {background-color: #bd73eb;}
+        .stButton>button {border-radius: 5px;}
+        .stSelectbox, .stSlider {padding: 5px;}
+        .st-eb {background-color: #e8f4f8;}
+        h1 {color: #2a5a72;}
+        h2 {color: #3d7b96;}
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Functions
+    def validate_fasta(uploaded_file):
+        try:
+            with tempfile.NamedTemporaryFile(delete=False) as tmp:
+                tmp.write(uploaded_file.getvalue())
+                tmp.seek(0)
+                records = list(SeqIO.parse(tmp.name, "fasta"))
+                if len(records) < 3:
+                    return False, "At least 3 sequences required"
+                return True, ""
+        except Exception as e:
+            return False, f"Invalid FASTA format: {str(e)}"
+
+    def run_mafft(input_file, output_file, gap_open, gap_extend):
+        cmd = f"mafft --globalpair --maxiterate 1000 --op {gap_open} --lep {gap_extend} {input_file} > {output_file}"
+        with open(output_file, 'w') as f:
+            subprocess.run(cmd, shell=True, check=True, stdout=f)
+
+    def run_muscle(input_file, output_file, gap_open, gap_extend):
+        cmd = f"muscle3 -in {input_file} -out {output_file} -gapopen {gap_open} -gapextend {gap_extend}"
+        subprocess.run(cmd, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    def run_clustalw(input_file, output_file, gap_open, gap_extend):
+        cmd = f"clustalw -infile={input_file} -gapopen={gap_open} -gapext={gap_extend} -outfile={output_file}"
+        subprocess.run(cmd, shell=True, check=True)
+
+    def run_ml(input_file, output_file):
+        cmd = "FastTree -gtr -nt alignment.fasta > tree.nwk"
+        subprocess.run(cmd, shell=True, check=True)
+
+    # Main App
+    st.title("PhyloGen Tool")
+    st.markdown("Upload your FASTA file and generate publication-quality phylogenetic trees!")
+
+    # File Upload Section
+    uploaded_file = st.file_uploader("Choose a file", type=["fasta", "fa"])
+
+    if uploaded_file is not None:
+        st.success(f"Uploaded file: {uploaded_file.name}")
+        file_content = uploaded_file.read().decode("utf-8")
+        sequences = list(SeqIO.parse(StringIO(file_content), "fasta"))
+
+        if st.checkbox("Preview Sequences"):
+            seq_data = []
+            for seq in sequences:
+                seq_data.append({
+                    "ID": seq.id,
+                    "Description": seq.description,
+                    "Length": len(seq.seq),
+                    "Type": "DNA" if "U" not in seq.seq else "Protein"
+                })
+            st.dataframe(pd.DataFrame(seq_data), height=200)
+
+    # Sidebar
+    with st.sidebar:
+        st.header("Workflow")
+        st.markdown("""
+        **FASTA to Phylogenetic Tree Tool**
+
+        - Upload FASTA sequences
+        - Perform multiple sequence alignment
+        - Build phylogenetic trees
+        - Export results
+        """)
+        st.divider()
+        st.markdown("Sequence type")
+        sequence_type = st.radio("Select Sequence Type", ["DNA", "Protein"])
+        st.divider()
+
+    # Processing Section
+    is_valid, error_msg = validate_fasta(uploaded_file)
+    if uploaded_file and is_valid:
+        with st.expander("⚙️ STEP 2: Processing Options", expanded=True):
+            col1, col2 = st.columns(2)
+            with col1:
+                st.subheader("Alignment Settings")
+                align_tool = st.selectbox("Alignment Algorithm", ["MAFFT", "Clustalw", "MUSCLE"])
+                gap_open = st.slider("Gap Opening Penalty", 1, 7, 2)
+                gap_extend = st.slider("Gap Extension Penalty", 0.1, 2.0, 0.1)
+            with col2:
+                st.subheader("Tree Building")
+                tree_method = st.selectbox("Construction Method", ["Distance based", "Character based"])
+                if tree_method == "Distance based":
+                    dmat = st.selectbox("Distance based", ["Neighbour Joining", "UPGMA"])
+                else:
+                    dmat = st.selectbox("Character based", ["Maximum Parsimony", "Maximum Likelihood"])
+                substitution_model = st.selectbox(
+                    "Substitution model",
+                    ["blosum62", "blosum45", "blosum50", "blastp", "dayhoff", "pam250", "pam70", "pam30", "identity"]
+                    if sequence_type == "Protein" else
+                    ["megablast", "blastn", "trans", "identity"]
+                )
+
+        if st.button("Run Full Analysis", type="primary"):
+            with st.status("Running Analysis...", expanded=True) as status:
+                temp_fasta = "temp.fasta"
+                temp_aln = "alignment.fasta"
+                tree = "output_file"
+
+                with open(temp_fasta, "w") as f:
+                    f.write(file_content)
+
+                st.write("Aligning sequences...")
+                if align_tool == "MAFFT":
+                    run_mafft(temp_fasta, temp_aln, gap_open, gap_extend)
+                elif align_tool == "Clustalw":
+                    run_clustalw(temp_fasta, temp_aln, gap_open, gap_extend)
+                else:
+                    run_muscle(temp_fasta, temp_aln, gap_open, gap_extend)
+
+                st.write("Building phylogenetic tree...")
+
+                def distmat(alignment_file):
+                    calculator = DistanceCalculator(substitution_model)
+                    return calculator.get_distance(alignment)
+
+                if tree_method == "Distance based":
+                    alignment = AlignIO.read(temp_aln, "fasta")
+                    constructor = DistanceTreeConstructor()
+                    tree = constructor.nj(distmat(temp_aln)) if dmat == "Neighbour Joining" else constructor.upgma(distmat(temp_aln))
+                    Phylo.write(tree, "tree.nwk", "newick")
+
+                elif tree_method == "Character based":
+                    alignment = AlignIO.read(temp_aln, "fasta")
+                    if dmat == "Maximum Parsimony":
+                        calculator = DistanceCalculator('identity')
+                        distance_matrix = calculator.get_distance(alignment)
+                        constructor = DistanceTreeConstructor()
+                        starting_tree = constructor.nj(distance_matrix)
+                        scorer = ParsimonyScorer()
+                        searcher = NNITreeSearcher(scorer)
+                        pars_constructor = ParsimonyTreeConstructor(searcher, starting_tree)
+                        tree = pars_constructor.build_tree(alignment)
+                    else:
+                        run_ml(temp_aln, tree)
+                        tree = Phylo.read("tree.nwk", "newick")
+
+                num_taxa = len(tree.get_terminals())
+                fig = plt.figure(figsize=(8, max(4, num_taxa * 0.4)))
+                ax = fig.add_subplot(1, 1, 1)
+                Phylo.draw(tree, axes=ax, label_func=lambda clade: clade.name if clade.is_terminal() else None,
+                           branch_labels=lambda clade: f"{round(clade.branch_length, 3)}" if clade.branch_length else '',
+                           do_show=False)
+                ax.set_xlabel("Branch Length")
+                ax.set_ylabel("Taxa")
+                ax.set_title(f"{dmat}", fontsize=14)
+                plt.tight_layout()
+                tree_image_path = "tree.png"
+                plt.savefig(tree_image_path)
+                plt.close()
+
+                status.update(label="Analysis Complete!", state="complete", expanded=False)
+
+            # Results
+            st.subheader("Results")
+            t1, t2, t3 = st.tabs(["Tree Visualization", "Alignment", "Tree Data"])
+
+            with t1:
+                if os.path.exists(tree_image_path):
+                    with open(tree_image_path, "rb") as img_file:
+                        st.download_button("Download Tree Image", data=img_file, file_name="phylogenetic_tree.png", mime="image/png")
+                    st.pyplot(fig)
+                else:
+                    st.error("Error: The phylogenetic tree image could not be generated.")
+
+            with t2:
+                with open(temp_aln) as f:
+                    st.download_button("Download Alignment", f.read(), "alignment.fasta")
+                st.code(open(temp_aln).read(), language='fasta')
+
+            with t3:
+                tree_nwk_path = "tree.nwk"
+                if os.path.exists(tree_nwk_path):
+                    with open(tree_nwk_path, "r") as tree_file:
+                        st.download_button("Download Newick", tree_file.read(), "tree.nwk")
+                    st.code(open(tree_nwk_path).read(), language='newick')
+
+    # Cleanup
+    if uploaded_file:
+        for f in ["temp.fasta", "alignment.fasta", "tree.txt", "tree.nwk"]:
+            if os.path.exists(f):
+                os.remove(f)
+with tab4:
+    st.title("📌 About The Developer")
+
+    st.markdown("""
+    ---
+     👨‍💻 Author 
+    ---
+    Sejal Chaudhari
+    ---
+    Master's Student in Bioinformatics  
+    DES Pune University, Maharashtra, India
+   
+    ---
+    ### 🎯 Purpose
+    - To simplify sequence alignment and tree building for educational and academic purposes.
+    - To provide an interactive visualization platform for understanding evolutionary relationships.
+    - To demonstrate integration of core bioinformatics algorithms in a Python web framework.
+
+    ---
+    ### 🌟 Key Features
+    - 🧬 FASTA Upload & Sequence Preview  
+    - 🧰 Multiple Sequence Alignment (MAFFT, MUSCLE, ClustalW)  
+    - 🌳 Phylogenetic Tree Construction (NJ, UPGMA, Maximum Parsimony, ML)  
+    - 📐 Adjustable Gap Penalties & Substitution Models  
+    - 📤 Downloadable Outputs (Newick, FASTA, Tree Image)  
+    - 📊 Tree Visualization with Branch Lengths  
+    - 🧠 DNA and Protein Modes  
+
+    ---
+    ### 🛠️ Tools & Technologies Used
+    - Python, Streamlit for Web Interface  
+    - Biopython for Sequence Parsing, Alignment, and Phylogenetics  
+    - Matplotlib for Tree Rendering  
+    - Subprocess calls for CLI-based tools like MAFFT, MUSCLE, and FastTree  
+
+    ---
+    ### 💡 Benefits  
+    - Beginner-friendly layout with expandable configuration options  
+    - Clear visualization and downloadable results  
+    - Modular architecture — easy to enhance with new tools  
+    - 
+
+    ---
+    ### 🚀 Planned Enhancements
+    - Enhanced tree editing tools (advanced visulaisation features)
+    - Session saving and project export  
+    - Support for multi-gene and whole-genome datasets  
+    - Integration with online databases (e.g., GenBank fetch)  
+
+    ---
+    ### 👨‍🏫 Mentorship & Acknowledgements
+    **Special thanks to Dr. Kushagra Kashyap**  
+    Assistant Professor (Bioinformatics), Department of Life Sciences  
+    DES Pune University, for his academic guidance and mentorship that shaped the design and development of this tool.
+    🔗 [Connect on LinkedIn](https://www.linkedin.com/in/dr-kushagra-kashyap-b230a3bb)
+
+    ---
+    ### 🔗 Connect & Contact
+    📧 Email: [sejalc2468@gmail.com](mailto:sejalc2468@gmail.com)  
+
+    *Thank you for exploring PhyloGen Tool! Your feedback is always welcome.*
+    """)
+
+    
+
+
