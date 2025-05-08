@@ -1,0 +1,7 @@
+#Requirements:
+#Following tools need to be installed:
+1. Biopython
+2. Clustalw
+3. MAFFT
+4. MUSCLE
+5. FASTTREE
