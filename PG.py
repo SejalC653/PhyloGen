@@ -9,14 +9,12 @@ import pandas as pd
 from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor, ParsimonyTreeConstructor, ParsimonyScorer, NNITreeSearcher
 import base64
 
-# ✅ First Streamlit Command
 st.set_page_config(
     page_title="PhyloGen - Home",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# --- Custom CSS --- 
 st.markdown("""
     <style>
         .content-box {
@@ -61,10 +59,6 @@ st.markdown("""
 
     </style>
 """, unsafe_allow_html=True)
-
-# --- Tabs ---
-
-
 
 with st.sidebar:
     st.title("PhyloGen V1.0")
@@ -193,10 +187,6 @@ if page == "📘 User Guide":
         file_name="PGManual.pdf",      # Filename to be given to the downloaded PDF
         mime="application/pdf"            # MIME type for PDF
       )
-
-   
-
-
 
 if page == "🧪 PhyloGen Tool":
     st.markdown("""
@@ -377,7 +367,6 @@ if page == "🧪 PhyloGen Tool":
                         st.download_button("Download Newick", tree_file.read(), "tree.nwk")
                     st.code(open(tree_nwk_path).read(), language='newick')
 
-    # Cleanup
     if uploaded_file:
         for f in ["temp.fasta", "alignment.fasta", "tree.txt", "tree.nwk"]:
             if os.path.exists(f):
