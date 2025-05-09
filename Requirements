@@ -1,7 +1,4 @@
-#Requirements:
-#Following tools need to be installed:
-1. Biopython
-2. Clustalw
-3. MAFFT
-4. MUSCLE
-5. FASTTREE
+streamlit==1.20.0
+biopython==1.81
+matplotlib==3.7.1
+pandas==2.0.2
