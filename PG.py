@@ -95,7 +95,7 @@ with st.sidebar:
 
 
 if page == "🏠️ Home":
-    st.markdown('<div class="content-box">', unsafe_allow_html=True)
+    st.markdown('<div class="features-box">', unsafe_allow_html=True)
 
     st.markdown("## 🧬 Welcome to PhyloGen")
     st.markdown(""" 
@@ -103,7 +103,6 @@ if page == "🏠️ Home":
     Designed for students, researchers, and life scientists, PhyloGen streamlines alignment and tree construction using trusted tools—without needing to write code or use the command line.
     """)
 
-    # Removed the light blue box – replaced with regular content-box
     st.markdown("### 🛠️ Features")
     st.markdown("""  
     - 📁 **FASTA File Upload** – Upload .fasta or .fa files with 3+ sequences  
@@ -216,7 +215,7 @@ if page == "🧪 PhyloGen Tool":
     def run_mafft(input_file, output_file, gap_open, gap_extend):
         cmd = f"mafft --globalpair --maxiterate 1000 --op {gap_open} --ep {gap_extend} {input_file} > {output_file}"
         with open(output_file, 'w') as f:
-            subprocess.run(cmd, shell=True, check=True, stdout=out)
+            subprocess.run(cmd, shell=True, check=True)
 
     def run_muscle(input_file, output_file, gap_open, gap_extend):
         cmd = f"muscle3 -in {input_file} -out {output_file} -gapopen {gap_open} -gapextend {gap_extend}"
