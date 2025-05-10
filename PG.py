@@ -17,25 +17,6 @@ st.set_page_config(
 
 st.markdown("""
     <style>
-        .content-box {
-            padding: 2.5rem;
-            border-radius: 12px;
-            margin-top: 20px;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.05);
-        }
-
-        .features-box {
-            background-color: #cce4f6; /* Light blue background for Features section */
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.05);
-        }
-
-        h1 {
-            color: #114b5f;
-            margin-bottom: 0 !important;  /* Removed space below title */
-        }
-
         .stTabs [data-baseweb="tab-list"] {
             gap: 20px;
             margin-top: 0 !important;  /* Removed space above tabs */
