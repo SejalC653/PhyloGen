@@ -60,37 +60,37 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-    st.title("PhyloGen V1.0")
-    st.header("Navigation")
-    page = st.sidebar.radio("Go to", ["🏠️ Home", "📘 User Guide", "🧪 PhyloGen Tool", "ℹ️ About"])
-    if page == "🏠️ Home":
-        st.divider()
-        st.header("Workflow")
-        st.markdown("""
-        **FASTA to Phylogenetic Tree Tool**
 
-        - Upload FASTA sequences  
-        - Perform multiple sequence alignment  
-        - Build phylogenetic trees  
-        - Export results
-        """)
-        st.divider()
+st.title("PhyloGen V1.0")
+st.header("Navigation")
+page = st.sidebar.radio("Go to", ["🏠️ Home", "📘 User Guide", "🧪 PhyloGen Tool", "ℹ️ About"])
+if page == "🏠️ Home":
+    st.divider()
+    st.header("Workflow")
+    st.markdown("""
+    **FASTA to Phylogenetic Tree Tool**
 
-    elif page == "🧪 PhyloGen Tool":
-        st.header("Workflow")
-        st.markdown("""
-        **FASTA to Phylogenetic Tree Tool**
+    - Upload FASTA sequences  
+    - Perform multiple sequence alignment  
+    - Build phylogenetic trees  
+    - Export results
+    """)
+    st.divider()
 
-        - Upload FASTA sequences  
-        - Perform multiple sequence alignment  
-        - Build phylogenetic trees  
-        - Export results
-        """)
-        st.divider()
-        st.markdown("Choose a sequence type")
-        sequence_type = st.radio("Select Sequence Type", ["DNA", "Protein"])
-        st.divider()
+elif page == "🧪 PhyloGen Tool":
+    st.header("Workflow")
+    st.markdown("""
+    **FASTA to Phylogenetic Tree Tool**
 
+    - Upload FASTA sequences  
+    - Perform multiple sequence alignment  
+    - Build phylogenetic trees  
+    - Export results
+    """)
+    st.divider()
+    st.markdown("Choose a sequence type")
+    sequence_type = st.radio("Select Sequence Type", ["DNA", "Protein"])
+    st.divider()
 
 
 if page == "🏠️ Home":
