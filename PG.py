@@ -77,30 +77,30 @@ with st.sidebar:
 
 if page == "🏠️ Home":
     st.markdown(unsafe_allow_html=True)
-        st.markdown("## 🧬 Welcome to PhyloGen")
-        st.markdown(""" 
-        **PhyloGen** is an intuitive web application for building phylogenetic trees from DNA or protein sequences in FASTA format.  
-        Designed for students, researchers, and life scientists, PhyloGen streamlines alignment and tree construction using trusted tools—without needing to write code or use the command line.
-        """)
+    st.markdown("## 🧬 Welcome to PhyloGen")
+    st.markdown(""" 
+    **PhyloGen** is an intuitive web application for building phylogenetic trees from DNA or protein sequences in FASTA format.  
+    Designed for students, researchers, and life scientists, PhyloGen streamlines alignment and tree construction using trusted tools—without needing to write code or use the command line.
+    """)
         
-        st.markdown("### 🛠️ Features")
-        st.markdown("""  
-        - 📁 **FASTA File Upload** – Upload .fasta or .fa files with 3+ sequences  
-        - 🧬 **Multiple Sequence Alignment** – Choose from **MAFFT**, **MUSCLE**, or **ClustalW**  
-        - 🌳 **Tree Construction Methods**:
-        - Distance-based: **Neighbor Joining**, **UPGMA**
-        - Character-based: **Maximum Parsimony**, **Maximum Likelihood (FastTree)**
-        - ⚙️ **Customizable Parameters** – Gap penalties, substitution models for DNA or protein  
-        - 🔢 **Substitution Model** - Choose a substitution model for construction of matrix
-            - DNA: **Blossom62**, **Blossom45**, **Blossom50**, **Blastp**, **Dayhoff**, **Pam250**, 
-            **Pam70**, **Pam30**, **Identity**  
-            - Protein: **Megablast**, **Blastn**, **Trans**, **Identity**
-        - 📊 **Interactive Preview** – See uploaded sequence details before processing  
-        - 📤 **Export Results**:
-           - Aligned sequences (FASTA)  
-           - Tree files (Newick format)  
-                - Tree images (PNG, ready for publication)
-            """)
+    st.markdown("### 🛠️ Features")
+    st.markdown("""  
+    - 📁 **FASTA File Upload** – Upload .fasta or .fa files with 3+ sequences  
+    - 🧬 **Multiple Sequence Alignment** – Choose from **MAFFT**, **MUSCLE**, or **ClustalW**  
+    - 🌳 **Tree Construction Methods**:
+    - Distance-based: **Neighbor Joining**, **UPGMA**
+    - Character-based: **Maximum Parsimony**, **Maximum Likelihood (FastTree)**
+    - ⚙️ **Customizable Parameters** – Gap penalties, substitution models for DNA or protein  
+    - 🔢 **Substitution Model** - Choose a substitution model for construction of matrix
+        - DNA: **Blossom62**, **Blossom45**, **Blossom50**, **Blastp**, **Dayhoff**, **Pam250**, 
+        **Pam70**, **Pam30**, **Identity**  
+        - Protein: **Megablast**, **Blastn**, **Trans**, **Identity**
+    - 📊 **Interactive Preview** – See uploaded sequence details before processing  
+    - 📤 **Export Results**:
+        - Aligned sequences (FASTA)  
+        - Tree files (Newick format)  
+        - Tree images (PNG, ready for publication)
+    """)
     st.markdown(unsafe_allow_html=True)
 
 
