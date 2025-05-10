@@ -9,11 +9,13 @@ import pandas as pd
 from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor, ParsimonyTreeConstructor, ParsimonyScorer, NNITreeSearcher
 import base64
 
+
 st.set_page_config(
     page_title="PhyloGen - Home",
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
 
 st.markdown("""
     <style>
@@ -60,37 +62,42 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# --- Tabs ---
 
-st.title("PhyloGen V1.0")
-st.header("Navigation")
-page = st.sidebar.radio("Go to", ["🏠️ Home", "📘 User Guide", "🧪 PhyloGen Tool", "ℹ️ About"])
-if page == "🏠️ Home":
-    st.divider()
-    st.header("Workflow")
-    st.markdown("""
-    **FASTA to Phylogenetic Tree Tool**
 
-    - Upload FASTA sequences  
-    - Perform multiple sequence alignment  
-    - Build phylogenetic trees  
-    - Export results
-    """)
-    st.divider()
 
-elif page == "🧪 PhyloGen Tool":
-    st.header("Workflow")
-    st.markdown("""
-    **FASTA to Phylogenetic Tree Tool**
+with st.sidebar:
+    st.title("PhyloGen V1.0")
+    st.header("Navigation")
+    page = st.sidebar.radio("Go to", ["🏠️ Home", "📘 User Guide", "🧪 PhyloGen Tool", "ℹ️ About"])
+    if page == "🏠️ Home":
+        st.divider()
+        st.header("Workflow")
+        st.markdown("""
+        **FASTA to Phylogenetic Tree Tool**
 
-    - Upload FASTA sequences  
-    - Perform multiple sequence alignment  
-    - Build phylogenetic trees  
-    - Export results
-    """)
-    st.divider()
-    st.markdown("Choose a sequence type")
-    sequence_type = st.radio("Select Sequence Type", ["DNA", "Protein"])
-    st.divider()
+        - Upload FASTA sequences  
+        - Perform multiple sequence alignment  
+        - Build phylogenetic trees  
+        - Export results
+        """)
+        st.divider()
+
+    elif page == "🧪 PhyloGen Tool":
+        st.header("Workflow")
+        st.markdown("""
+        **FASTA to Phylogenetic Tree Tool**
+
+        - Upload FASTA sequences  
+        - Perform multiple sequence alignment  
+        - Build phylogenetic trees  
+        - Export results
+        """)
+        st.divider()
+        st.markdown("Choose a sequence type")
+        sequence_type = st.radio("Select Sequence Type", ["DNA", "Protein"])
+        st.divider()
+
 
 
 if page == "🏠️ Home":
@@ -172,7 +179,8 @@ if page == "📘 User Guide":
     display_image_with_border("7resdata.png", "Download tree data as Newick format")
 
     st.markdown("</div>", unsafe_allow_html=True)
-        # Path to the existing PDF file
+
+    # Path to the existing PDF file
     pdf_path = "PGManual.pdf"  # Replace with your actual PDF file path
 
     # Provide a download button to download the PDF file
@@ -185,6 +193,7 @@ if page == "📘 User Guide":
         file_name="PGManual.pdf",      # Filename to be given to the downloaded PDF
         mime="application/pdf"            # MIME type for PDF
       )
+
    
 
 
@@ -215,7 +224,7 @@ if page == "🧪 PhyloGen Tool":
             return False, f"Invalid FASTA format: {str(e)}"
 
     def run_mafft(input_file, output_file, gap_open, gap_extend):
-        cmd = f"mafft --globalpair --maxiterate 1000 --op {gap_open} --lep {gap_extend} {input_file} > {output_file}"
+        cmd = f"mafft --globalpair --maxiterate 1000 --op {gap_open} --ep {gap_extend} {input_file} > {output_file}"
         with open(output_file, 'w') as f:
             subprocess.run(cmd, shell=True, check=True, stdout=f)
 
