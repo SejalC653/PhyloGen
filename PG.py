@@ -17,6 +17,25 @@ st.set_page_config(
 
 st.markdown("""
     <style>
+        .content-box {
+            padding: 2.5rem;
+            border-radius: 12px;
+            margin-top: 20px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.05);
+        }
+
+        .features-box {
+            background-color: #cce4f6; /* Light blue background for Features section */
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            color: #114b5f;
+            margin-bottom: 0 !important;  /* Removed space below title */
+        }
+
         .stTabs [data-baseweb="tab-list"] {
             gap: 20px;
             margin-top: 0 !important;  /* Removed space above tabs */
@@ -41,7 +60,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-with st.sidebar:
     st.title("PhyloGen V1.0")
     st.header("Navigation")
     page = st.sidebar.radio("Go to", ["🏠️ Home", "📘 User Guide", "🧪 PhyloGen Tool", "ℹ️ About"])
@@ -76,24 +94,26 @@ with st.sidebar:
 
 
 if page == "🏠️ Home":
-    st.markdown(unsafe_allow_html=True)
+    st.markdown('<div class="content-box">', unsafe_allow_html=True)
+
     st.markdown("## 🧬 Welcome to PhyloGen")
     st.markdown(""" 
     **PhyloGen** is an intuitive web application for building phylogenetic trees from DNA or protein sequences in FASTA format.  
     Designed for students, researchers, and life scientists, PhyloGen streamlines alignment and tree construction using trusted tools—without needing to write code or use the command line.
     """)
-        
+
+    # Removed the light blue box – replaced with regular content-box
     st.markdown("### 🛠️ Features")
     st.markdown("""  
     - 📁 **FASTA File Upload** – Upload .fasta or .fa files with 3+ sequences  
     - 🧬 **Multiple Sequence Alignment** – Choose from **MAFFT**, **MUSCLE**, or **ClustalW**  
     - 🌳 **Tree Construction Methods**:
-    - Distance-based: **Neighbor Joining**, **UPGMA**
-    - Character-based: **Maximum Parsimony**, **Maximum Likelihood (FastTree)**
+        - Distance-based: **Neighbor Joining**, **UPGMA**
+        - Character-based: **Maximum Parsimony**, **Maximum Likelihood (FastTree)**
     - ⚙️ **Customizable Parameters** – Gap penalties, substitution models for DNA or protein  
     - 🔢 **Substitution Model** - Choose a substitution model for construction of matrix
         - DNA: **Blossom62**, **Blossom45**, **Blossom50**, **Blastp**, **Dayhoff**, **Pam250**, 
-        **Pam70**, **Pam30**, **Identity**  
+               **Pam70**, **Pam30**, **Identity**  
         - Protein: **Megablast**, **Blastn**, **Trans**, **Identity**
     - 📊 **Interactive Preview** – See uploaded sequence details before processing  
     - 📤 **Export Results**:
@@ -101,7 +121,8 @@ if page == "🏠️ Home":
         - Tree files (Newick format)  
         - Tree images (PNG, ready for publication)
     """)
-    st.markdown(unsafe_allow_html=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
 def get_image_base64(image_path):
@@ -151,8 +172,7 @@ if page == "📘 User Guide":
     display_image_with_border("7resdata.png", "Download tree data as Newick format")
 
     st.markdown("</div>", unsafe_allow_html=True)
-
-    # Path to the existing PDF file
+        # Path to the existing PDF file
     pdf_path = "PGManual.pdf"  # Replace with your actual PDF file path
 
     # Provide a download button to download the PDF file
@@ -165,6 +185,9 @@ if page == "📘 User Guide":
         file_name="PGManual.pdf",      # Filename to be given to the downloaded PDF
         mime="application/pdf"            # MIME type for PDF
       )
+   
+
+
 
 if page == "🧪 PhyloGen Tool":
     st.markdown("""
@@ -192,9 +215,9 @@ if page == "🧪 PhyloGen Tool":
             return False, f"Invalid FASTA format: {str(e)}"
 
     def run_mafft(input_file, output_file, gap_open, gap_extend):
-        cmd = f"mafft --globalpair --maxiterate 1000 --op {gap_open} --ep {gap_extend} {input_file} > {output_file}"
+        cmd = f"mafft --globalpair --maxiterate 1000 --op {gap_open} --lep {gap_extend} {input_file} > {output_file}"
         with open(output_file, 'w') as f:
-            subprocess.run(cmd, shell=True, check=True)
+            subprocess.run(cmd, shell=True, check=True, stdout=f)
 
     def run_muscle(input_file, output_file, gap_open, gap_extend):
         cmd = f"muscle3 -in {input_file} -out {output_file} -gapopen {gap_open} -gapextend {gap_extend}"
@@ -345,6 +368,7 @@ if page == "🧪 PhyloGen Tool":
                         st.download_button("Download Newick", tree_file.read(), "tree.nwk")
                     st.code(open(tree_nwk_path).read(), language='newick')
 
+    # Cleanup
     if uploaded_file:
         for f in ["temp.fasta", "alignment.fasta", "tree.txt", "tree.nwk"]:
             if os.path.exists(f):
@@ -412,7 +436,3 @@ if page == "ℹ️ About":
 
     *Thank you for exploring PhyloGen Tool! Your feedback is always welcome.*
     """)
-
-    
-
-
