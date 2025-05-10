@@ -214,9 +214,9 @@ if page == "🧪 PhyloGen Tool":
             return False, f"Invalid FASTA format: {str(e)}"
 
     def run_mafft(input_file, output_file, gap_open, gap_extend):
-        cmd = f"mafft --globalpair --maxiterate 1000 --op {gap_open} --lep {gap_extend} {input_file} > {output_file}"
+        cmd = f"mafft --globalpair --maxiterate 1000 --op {gap_open} --ep {gap_extend} {input_file} > {output_file}"
         with open(output_file, 'w') as f:
-            subprocess.run(cmd, shell=True, check=True, stdout=f)
+            subprocess.run(cmd, shell=True, check=True, stdout=out)
 
     def run_muscle(input_file, output_file, gap_open, gap_extend):
         cmd = f"muscle3 -in {input_file} -out {output_file} -gapopen {gap_open} -gapextend {gap_extend}"
