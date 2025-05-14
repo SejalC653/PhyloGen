@@ -11,14 +11,12 @@ import base64
 import requests
 import time
 
-# ✅ First Streamlit Command
 st.set_page_config(
     page_title="PhyloGen - Home",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# --- Custom CSS --- 
 st.markdown("""
     <style>
         .content-box {
@@ -115,7 +113,7 @@ if page == "🏠️ Home":
     st.markdown("### 🛠️ Features")
     st.markdown("""  
     - 📁 **FASTA File Upload** – Upload .fasta or .fa files with 3+ sequences  
-    - 🧬 **Multiple Sequence Alignment** – Choose from **MAFFT**, **MUSCLE**, or **ClustalW**  
+    - 🧬 **Multiple Sequence Alignment** – Choose from **MAFFT**, **MUSCLE**, **ClustalW** or **TCoffee**  
     - 🌳 **Tree Construction Methods**:
         - Distance-based: **Neighbor Joining**, **UPGMA**
         - Character-based: **Maximum Parsimony**, **Maximum Likelihood (FastTree)**
@@ -182,18 +180,16 @@ if page == "📘 User Guide":
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # Path to the existing PDF file
-    pdf_path = "PGManual.pdf"  # Replace with your actual PDF file path
+    pdf_path = "PGManual.pdf" 
 
-    # Provide a download button to download the PDF file
     with open(pdf_path, "rb") as pdf_file:
         pdf_bytes = pdf_file.read()
 
     st.download_button(
-        label="Download User Manual",  # Button label
-        data=pdf_bytes,                   # PDF data in binary
-        file_name="PGManual.pdf",      # Filename to be given to the downloaded PDF
-        mime="application/pdf"            # MIME type for PDF
+        label="Download User Manual", 
+        data=pdf_bytes,                  
+        file_name="PGManual.pdf",    
+        mime="application/pdf"            
       )
 
    
@@ -399,8 +395,7 @@ if page == "🧪 PhyloGen Tool":
                     with open(tree_nwk_path, "r") as tree_file:
                         st.download_button("Download Newick", tree_file.read(), "tree.nwk")
                     st.code(open(tree_nwk_path).read(), language='newick')
-
-    # Cleanup
+                    
     if uploaded_file:
         for f in ["temp.fasta", "alignment.fasta", "tree.txt", "tree.nwk"]:
             if os.path.exists(f):
@@ -426,7 +421,7 @@ if page == "ℹ️ About":
     ---
     ### 🌟 Key Features
     - 🧬 FASTA Upload & Sequence Preview  
-    - 🧰 Multiple Sequence Alignment (MAFFT, MUSCLE, ClustalW)  
+    - 🧰 Multiple Sequence Alignment (MAFFT, MUSCLE, ClustalW, TCoffee)  
     - 🌳 Phylogenetic Tree Construction (NJ, UPGMA, Maximum Parsimony, ML)  
     - 📐 Adjustable Gap Penalties & Substitution Models  
     - 📤 Downloadable Outputs (Newick, FASTA, Tree Image)  
@@ -436,7 +431,8 @@ if page == "ℹ️ About":
     ---
     ### 🛠️ Tools & Technologies Used
     - Python, Streamlit for Web Interface  
-    - Biopython for Sequence Parsing, Alignment, and Phylogenetics  
+    - Biopython for Sequence Parsing, and Phylogenetics
+    - EMBL for Alignment
     - Matplotlib for Tree Rendering  
     - Subprocess calls for CLI-based tools like MAFFT, MUSCLE, and FastTree  
 
