@@ -1,0 +1,4 @@
+streamlit>=1.20.0
+biopython>=1.81
+matplotlib>=3.7.1
+pandas>=2.0.2
