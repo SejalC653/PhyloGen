@@ -230,7 +230,7 @@ if page == "🧪 PhyloGen Tool":
     st.markdown("Upload your FASTA file and generate publication-quality phylogenetic trees!")
 
     # File Upload Section
-    uploaded_file = st.file_uploader("Choose a file", type=["fasta", "fa"])
+    uploaded_file = st.file_uploader("Choose a file(upto 4 mb)", type=["fasta", "fa"])
 
     if uploaded_file is not None:
         st.success(f"Uploaded file: {uploaded_file.name}")
