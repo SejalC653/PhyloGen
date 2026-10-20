@@ -259,7 +259,7 @@ if page == "🧪 PhyloGen Tool":
                 st.subheader("Alignment Settings")
                 align_tool = st.selectbox("Alignment Algorithm", ["mafft", "muscle", "clustalo", "tcoffee"])
                 gap_open = st.number_input("Gap Open Penalty (max=3.0)", value=2.7)
-                gap_extend = st.number_input("Gap Extension Penalty (max=1.0)", value=1.8)
+                gap_extend = st.number_input("Gap Extension Penalty (max=1.0)", value=0.8)
             with col2:
                 st.subheader("Tree Construction")
                 tree_method = st.selectbox("Construction Method", ["Distance based", "Character based"])
